@@ -3,7 +3,8 @@ from flask import Blueprint, request, jsonify
 from datetime import datetime
 from bson import ObjectId
 from pymongo import MongoClient
-
+from flask_jwt_extended import jwt_required, get_jwt_identity
+import secrets
 # Create a Blueprint for event routes
 event_routes = Blueprint('event_routes', __name__)
 
@@ -11,42 +12,53 @@ event_routes = Blueprint('event_routes', __name__)
 events_collection = None
 
 def init_events(db):
-    global events_collection
+    global events_collection, users_collection
     events_collection = db['events']  # Use or create a collection named 'events'
+    users_collection = db['users']
+
 
 @event_routes.route('/create', methods=['POST'])
+@jwt_required()  # Require a valid JWT token to access this route
 def create_event():
-    """
-    Create a new event.
-    """
+    # Get the identity of the logged-in user from the JWT token
+    current_user_email = get_jwt_identity()
+
+    # Find the user in the database to get their user_id
+    user = users_collection.find_one({"email": current_user_email})
+    if not user:
+        return jsonify({"message": "User not found"}), 404
+
+    user_id = user['user_id']  # Extract the user_id from the user document
+
     data = request.get_json()
 
     # Extract event details from the request
-    user_id = data.get('user_id')
     title = data.get('title')
     description = data.get('description')
     date = data.get('date')  # Expected format: "YYYY-MM-DD"
-    backdrop_image = data.get('backdrop_image','')
+    backdrop_image = data.get('backdrop_image')
     location = data.get('location')
     max_people = data.get('max_people')
     is_private = data.get('is_private', False)  # Default to False if not provided
-    tags = data.get('tags')  # Default to empty list if not provided
+    tags = data.get('tags', [])  # Default to empty list if not provided
 
     # Validate required fields
-    if not all([user_id, title, description, date, location, max_people,tags]):
+    if not all([title, description, date, location, max_people]):
         return jsonify({"message": "Missing required fields"}), 400
 
     # Create event document
     event_data = {
-        "user_id": user_id,
+        "user_id": user_id,  # Use the user_id from the logged-in user
         "title": title,
         "description": description,
-        "schedule_date": datetime.strptime(date, "%Y-%m-%d"),  # Convert string to datetime object
+        "date": datetime.strptime(date, "%Y-%m-%d"),  # Convert string to datetime object
         "backdrop_image": backdrop_image,
         "location": location,
         "max_people": max_people,
         "is_private": is_private,
         "tags": tags,
+        "created_at": datetime.utcnow(),  # Store creation timestamp
+        "updated_at": datetime.utcnow(),  # Store update timestamp
     }
 
     # Insert event into MongoDB
@@ -132,3 +144,78 @@ def delete_event(event_id):
         return jsonify({"message": "Event not found"}), 404
 
     return jsonify({"message": "Event deleted successfully"}), 200
+
+@event_routes.route('/event/<user_id>', methods=['GET'])
+def get_events_by_user(user_id):
+    """
+    Retrieve all events created by a specific user.
+    """
+    try:
+        # Query MongoDB for events created by the user
+        events = list(events_collection.find({"user_id": user_id}))
+
+        # If no events are found, return a 404 response
+        if not events:
+            return jsonify({"message": "No events found for this user"}), 404
+
+        # Convert MongoDB documents to a JSON-friendly format
+        for event in events:
+            event['_id'] = str(event['_id'])  # Convert ObjectId to string
+            event['date'] = event['date'].strftime("%Y-%m-%d")  # Convert datetime to string
+            event['created_at'] = event['created_at'].strftime("%Y-%m-%d %H:%M:%S")  # Format timestamp
+            event['updated_at'] = event['updated_at'].strftime("%Y-%m-%d %H:%M:%S")  # Format timestamp
+
+        # Return the list of events
+        return jsonify(events), 200
+    except Exception as e:
+        return jsonify({"message": "An error occurred", "error": str(e)}), 500
+
+@event_routes.route('/generate-invite-link/<event_id>', methods=['GET'])
+@jwt_required()
+def generate_invite_link(event_id):
+    """
+    Generate a unique invitation link for an event.
+    """
+    try:
+        event_id = ObjectId(event_id)
+    except Exception as e:
+        return jsonify({"message": "Invalid event ID"}), 400
+
+    # Check if the event exists
+    event = events_collection.find_one({"_id": event_id})
+    if not event:
+        return jsonify({"message": "Event not found"}), 404
+
+    # Generate a unique token for the invitation link
+    token = secrets.token_urlsafe(16)  # Generates a secure, random token
+
+    # Store the token in the event document (optional)
+    events_collection.update_one(
+        {"_id": event_id},
+        {"$set": {"invite_token": token}}
+    )
+
+    # Generate the invitation link
+    invite_link = f"https://yourapp.com/events/join?event_id={event_id}&token={token}"
+
+    return jsonify({"invite_link": invite_link}), 200
+
+@event_routes.route('/event/<event_id>/attendees', methods=['GET'])
+def get_attendees(event_id):
+    """
+    Retrieve the list of attendees for an event.
+    """
+    try:
+        event_id = ObjectId(event_id)
+    except Exception as e:
+        return jsonify({"message": "Invalid event ID"}), 400
+
+    # Get the event document
+    event = events_collection.find_one({"_id": event_id})
+    if not event:
+        return jsonify({"message": "Event not found"}), 404
+
+    # Get the list of attendees
+    attendees = event.get('attendees', [])
+
+    return jsonify({"attendees": attendees}), 200

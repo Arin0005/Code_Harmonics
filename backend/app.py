@@ -16,9 +16,14 @@ from recommendation import init_profile, recommendation_routes
 import os
 from gridfs import GridFS
 from dotenv import load_dotenv
+
+from flask_cors import CORS
+
+app = Flask(__name__)
+CORS(app)
 load_dotenv()
 # Initialize Flask app
-app = Flask(__name__)
+# app = Flask(__name__)
 
 # Initialize MongoDB connection
 client = MongoClient('mongodb://localhost:27017/')  # Connect to local MongoDB

@@ -115,7 +115,8 @@ def login():
     access_token = create_access_token(identity=email)
     return jsonify({
         "access_token": access_token,
-        "has_username": has_username
+        "has_username": has_username,
+        "user_id": user['user_id'],
     }), 200
 @auth_routes.route('/protected', methods=['GET'])
 @jwt_required()

@@ -1,10 +1,12 @@
 # events.py
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify,send_file
 from datetime import datetime
 from bson import ObjectId
 from pymongo import MongoClient
 from flask_jwt_extended import jwt_required, get_jwt_identity
 import secrets
+import qrcode
+import io
 from werkzeug.utils import secure_filename
 from gridfs import GridFS
 # Create a Blueprint for event routes
@@ -200,7 +202,10 @@ def generate_invite_link(event_id):
 
     # Generate the invitation link
     invite_link = f"https://yourapp.com/events/join?event_id={event_id}&token={token}"
-
+    events_collection.update_one(
+        {"_id": event_id},
+        {"$set": {"invite_link": invite_link}}
+    )
     return jsonify({"invite_link": invite_link}), 200
 
 @event_routes.route('/event/<event_id>/attendees', methods=['GET'])
@@ -370,3 +375,45 @@ def list_media(event_id):
     # Return the list of media files
     media_files = event.get('media', [])
     return jsonify({"media": media_files}), 200
+
+@event_routes.route('/generate-qr-code/<event_id>', methods=['GET'])
+@jwt_required()
+def generate_qr_code(event_id):
+    """
+    Generate a QR code for the event's invitation link.
+    """
+    try:
+        event_id = ObjectId(event_id)
+    except Exception as e:
+        return jsonify({"message": "Invalid event ID"}), 400
+
+    # Check if the event exists
+    event = events_collection.find_one({"_id": event_id})
+    if not event:
+        return jsonify({"message": "Event not found"}), 404
+
+    # Get the invitation link from the event document
+    invite_link = event.get("invite_link")
+    if not invite_link:
+        return jsonify({"message": "Invitation link not found for this event"}), 404
+
+    # Generate the QR code
+    qr = qrcode.QRCode(
+        version=1,
+        error_correction=qrcode.constants.ERROR_CORRECT_L,
+        box_size=10,
+        border=4,
+    )
+    qr.add_data(invite_link)
+    qr.make(fit=True)
+
+    # Create an image from the QR code
+    img = qr.make_image(fill='black', back_color='white')
+
+    # Save the image to a bytes buffer
+    buf = io.BytesIO()
+    img.save(buf, format='PNG')
+    buf.seek(0)
+
+    # Return the QR code image as a response
+    return send_file(buf, mimetype='image/png')

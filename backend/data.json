@@ -1,0 +1,36 @@
+{
+  "user_data": {
+    "user_name": "sss",
+    "user_id": "uuid",
+    "email_id": "igiugiu@gmail",
+    "verfied":0,
+    "password": "hashfunc",
+    "profile_pic": "some img",
+    "created_at": "date",
+    "bio": "tell me about yourself!",
+    "invitation": {
+      "todo": "todo"
+    }
+  },
+  "event_hosted": [
+    {
+      "event_name": "name"
+    }
+  ],
+  "new_event": {
+    "event_name": "",
+    "event_desc": "",
+    "date": "date",
+    "backdrop_img": "",
+    "cap_count": "int",
+    "privacy": "private/public",
+    "rsvp":{
+      "To_user": [
+        {
+          "user_id": "",
+          "status": ""
+        }
+      ]
+    }
+  }
+}

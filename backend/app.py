@@ -6,6 +6,7 @@ from flask_mail import Mail
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from authentication import auth_routes  # Import routes from authentication.py
+from profile import profile_routes
 import os
 from dotenv import load_dotenv
 load_dotenv()
@@ -29,6 +30,7 @@ limiter = Limiter(app=app, key_func=get_remote_address, default_limits=["200 per
 
 # Register authentication routes
 app.register_blueprint(auth_routes)
+app.register_blueprint(profile_routes)
 
 # Run the application
 if __name__ == '__main__':

@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile Setup</title>
+    <style>
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            background: linear-gradient(45deg, #0a0a0a, #1a1a1a, #2a2a2a);
+            background-size: 200% 200%;
+            animation: gradient 15s ease infinite;
+            color: #e0e0e0;
+            min-height: 100vh;
+        }
+
+        .form-container {
+            background: linear-gradient(145deg, #1e1e1e, #2d2d2d);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 77, 77, 0.1);
+            backdrop-filter: blur(10px);
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+            animation: fadeIn 0.5s ease-out forwards;
+            opacity: 0;
+        }
+
+        .form-group:nth-child(1) { animation-delay: 0.2s; }
+        .form-group:nth-child(2) { animation-delay: 0.4s; }
+        .form-group:nth-child(3) { animation-delay: 0.6s; }
+        .form-group:nth-child(4) { animation-delay: 0.8s; }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #ff4d4d;
+            text-shadow: 0 0 10px rgba(255, 77, 77, 0.3);
+        }
+
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid rgba(255, 77, 77, 0.2);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            font-size: 16px;
+            background: linear-gradient(145deg, #2d2d2d, #252525);
+            color: #e0e0e0;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        input[type="text"]:focus, textarea:focus {
+            outline: none;
+            border-color: #ff4d4d;
+            box-shadow: 0 0 15px rgba(255, 77, 77, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .preview-container {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            border-radius: 16px;
+            background: linear-gradient(145deg, #252525, #1e1e1e);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .preview-image {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid transparent;
+            background: linear-gradient(145deg, #ff4d4d, #ff3333);
+            margin: 10px auto;
+            display: block;
+            transition: all 0.3s ease;
+            animation: pulse 2s infinite;
+        }
+
+        .preview-image:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(255, 77, 77, 0.4);
+        }
+
+        .file-input-label {
+            background: linear-gradient(145deg, #ff4d4d, #ff3333);
+            color: white;
+            padding: 12px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            display: inline-block;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            font-size: 14px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 15px rgba(255, 77, 77, 0.3);
+        }
+
+        .file-input-label:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 77, 77, 0.4);
+        }
+
+        .checkbox-group {
+            border: none;
+            padding: 15px;
+            border-radius: 12px;
+            max-height: 200px;
+            overflow-y: auto;
+            background: linear-gradient(145deg, #252525, #1e1e1e);
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .checkbox-item {
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+            transition: all 0.3s ease;
+            padding: 8px;
+            border-radius: 8px;
+        }
+
+        .checkbox-item:hover {
+            background: rgba(255, 77, 77, 0.1);
+            transform: translateX(5px);
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            margin-right: 10px;
+            width: 18px;
+            height: 18px;
+            accent-color: #ff4d4d;
+        }
+
+        button {
+            background: linear-gradient(145deg, #ff4d4d, #ff3333);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            width: 100%;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            box-shadow: 0 4px 15px rgba(255, 77, 77, 0.3);
+        }
+
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(255, 77, 77, 0.4);
+        }
+
+        h1 {
+            color: #ff4d4d;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 32px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px rgba(255, 77, 77, 0.3);
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        /* Custom scrollbar */
+        .checkbox-group::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .checkbox-group::-webkit-scrollbar-track {
+            background: rgba(30, 30, 30, 0.5);
+            border-radius: 4px;
+        }
+
+        .checkbox-group::-webkit-scrollbar-thumb {
+            background: linear-gradient(145deg, #ff4d4d, #ff3333);
+            border-radius: 4px;
+        }
+
+        .checkbox-group::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(145deg, #ff3333, #ff2222);
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h1>Create Your Profile</h1>
+        <form id="profileForm">
+<!--            <div class="preview-container">-->
+<!--                <img id="preview" class="preview-image" src="/api/placeholder/150/150" alt="Profile preview">-->
+<!--&lt;!&ndash;                <div class="file-input-container">&ndash;&gt;-->
+<!--&lt;!&ndash;                    <label class="file-input-label" for="profile-pic">&ndash;&gt;-->
+<!--&lt;!&ndash;                        Choose Profile Picture&ndash;&gt;-->
+<!--&lt;!&ndash;                    </label>&ndash;&gt;-->
+<!--&lt;!&ndash;                    <input type="file" id="profile-pic" accept="image/*" onchange="previewImage(this)">&ndash;&gt;-->
+<!--&lt;!&ndash;                </div>&ndash;&gt;-->
+<!--            </div>-->
+
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" required placeholder="Enter your username">
+            </div>
+
+            <div class="form-group">
+                <label for="bio">Bio</label>
+                <textarea id="bio" rows="4" placeholder="Tell us about yourself"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Event Preferences</label>
+                <div class="checkbox-group">
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="sports" name="events" value="sports">
+                        <label for="sports">Sports</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="gym" name="events" value="gym">
+                        <label for="gym">Gym</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="hackathon" name="events" value="hackathon">
+                        <label for="hackathon">Hackathon</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="techfest" name="events" value="techfest">
+                        <label for="techfest">Tech Festival</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="workshop" name="events" value="workshop">
+                        <label for="workshop">Workshop</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="conference" name="events" value="conference">
+                        <label for="conference">Conference</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="networking" name="events" value="networking">
+                        <label for="networking">Networking Event</label>
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit">Save Profile</button>
+        </form>
+    </div>
+
+    <script>
+    function previewImage(input) {
+        const preview = document.getElementById('preview');
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                preview.src = e.target.result;
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    document.getElementById('profileForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        // Create a FormData object to hold the form data
+        const formData = new FormData();
+
+        // Append the profile picture file
+<!--        const profilePic = document.getElementById('profile-pic').files[0];-->
+<!--        if (profilePic) {-->
+<!--            formData.append('profilePic', profilePic);-->
+<!--        }-->
+
+        // Append the username and bio
+        formData.append('username', document.getElementById('username').value);
+        formData.append('bio', document.getElementById('bio').value);
+
+        // Append the selected event preferences
+        const selectedEvents = Array.from(document.querySelectorAll('input[name="events"]:checked'))
+            .map(checkbox => checkbox.value);
+        formData.append('events', JSON.stringify(selectedEvents));
+
+        try {
+            // Send the form data to the Flask API
+            const response = await fetch('http://127.0.0.1:5000/profile', {
+                method: 'POST',
+                body: formData, // FormData is sent as multipart/form-data
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            console.log('Success:', data);
+            alert('Profile updated successfully!');
+        } catch (error) {
+            console.error('There was a problem with the fetch operation:', error);
+            alert('Failed to update profile. Please try again.');
+        }
+    });
+</script>
+</body>
+</html>

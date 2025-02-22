@@ -4,44 +4,368 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Home - Event System</title>
-    <link rel="stylesheet" href="/frontend/styles/home.css"/>
+    <link rel="stylesheet" href="/frontend/styles/home.css" />
   </head>
   <body>
     <div class="main-container">
-      <img src="/api/placeholder/1920/1080" alt="Background" class="background-image" />
+      <img
+        src="/api/placeholder/1920/1080"
+        alt="Background"
+        class="background-image"
+      />
 
       <div class="overlay">
-        <!-- Navigation Bar with Profile Icon -->
-        <div class="nav-container">
-          <a href="profile.html" class="profile-btn">
-            <svg xmlns="http://www.w3.org/2000/svg" class="profile-icon" viewBox="0 0 24 24">
-              <path
-                d="M12 2.5a5.5 5.5 0 0 1 3.096 10.047 9.005 9.005 0 0 1 5.9 8.181.75.75 0 1 1-1.499.044 7.5 7.5 0 0 0-14.993 0 .75.75 0 0 1-1.5-.045 9.005 9.005 0 0 1 5.9-8.18A5.5 5.5 0 0 1 12 2.5ZM8 8a4 4 0 1 0 8 0 4 4 0 0 0-8 0Z"
-              ></path>
-            </svg>
-          </a>
-        </div>
+        <!-- Navigation Bar -->
+        <nav class="nav-container">
+          <div class="nav-left">
+            <a href="/" class="website-name">EventSystem</a>
+          </div>
 
-        <div class="container">
-          <h1 class="title">Create Memorable Moments</h1>
+          <div class="nav-right">
+            <!-- Navigation Menu -->
+            <div class="nav-menu">
+              <a href="#hero" class="nav-link active">Home</a>
+              <a href="#create" class="nav-link">Create Event</a>
+              <a href="#join" class="nav-link">Join Event</a>
+              <a href="#recommendations" class="nav-link">Recommendations</a>
+            </div>
 
-          <div class="grid-container">
-            <a href="create.html" class="card">
-              <h2 class="card-title">Create Event</h2>
-              <p class="card-text">
-                Design your perfect event with custom details, date, and location. Share instantly with a unique link or QR code.
-              </p>
+            <!-- Search Container -->
+            <div class="search-container">
+              <input
+                type="text"
+                class="search-input"
+                placeholder="Search events..."
+              />
+              <button class="search-btn">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="search-icon"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    d="M10.25 2a8.25 8.25 0 0 1 6.34 13.53l5.69 5.69a.75.75 0 1 1-1.06 1.06l-5.69-5.69A8.25 8.25 0 1 1 10.25 2ZM3.5 10.25a6.75 6.75 0 1 0 13.5 0 6.75 6.75 0 0 0-13.5 0Z"
+                  ></path>
+                </svg>
+              </button>
+            </div>
+
+            <!-- Profile Button -->
+            <a href="profile.html" class="profile-btn">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="profile-icon"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d="M12 2.5a5.5 5.5 0 0 1 3.096 10.047 9.005 9.005 0 0 1 5.9 8.181.75.75 0 1 1-1.499.044 7.5 7.5 0 0 0-14.993 0 .75.75 0 0 1-1.5-.045 9.005 9.005 0 0 1 5.9-8.18A5.5 5.5 0 0 1 12 2.5ZM8 8a4 4 0 1 0 8 0 4 4 0 0 0-8 0Z"
+                ></path>
+              </svg>
             </a>
+          </div>
+        </nav>
 
-            <a href="join.html" class="card">
-              <h2 class="card-title">Join Event</h2>
-              <p class="card-text">
-                Been invited? Join an event using the invitation link or scan the QR code to connect instantly.
+        <div id="hero" class="container">
+          <!-- Hero Section -->
+          <section class="hero-section">
+            <div class="hero-content">
+              <h1 class="hero-title">Experience Events Like Never Before</h1>
+              <p class="hero-subtitle">
+                Create, join, and make memories that last forever
               </p>
-            </a>
+            </div>
+            <div class="animated-bg"></div>
+          </section>
+
+          <!-- Create Event Section -->
+          <section id="create" class="content-section">
+            <h2 class="section-title">Create Event</h2>
+            <div class="card-container">
+              <div class="card">
+                <p class="card-text">
+                  Design your perfect event with custom details, date, and
+                  location. Share instantly with a unique link or QR code.
+                </p>
+                <a href="create.html" class="animated-button" data-popup="create-popup">
+                  Learn More
+                </a>
+              </div>
+            </div>
+          </section>
+
+          <!-- Join Event Section -->
+          <section id="join" class="content-section">
+            <h2 class="section-title">Join Event</h2>
+            <div class="card-container">
+              <div class="card">
+                <p class="card-text">
+                  Been invited? Join an event using the invitation link or scan
+                  the QR code to connect instantly.
+                </p>
+                <button class="animated-button" data-popup="join-popup">
+                  Learn More
+                </button>
+              </div>
+            </div>
+          </section>
+
+          <!-- Recommendations Section -->
+          <section id="recommendations" class="content-section">
+            <h2 class="section-title">Recommendations</h2>
+            <div class="recommendations-container">
+              <div class="recommendations-wrapper">
+                <!-- Recommendation Cards -->
+                <div class="recommendation-card" data-event="1">
+                  <h3 class="recommendation-title">Event Title 1</h3>
+                  <p class="recommendation-date">Date: October 10, 2023</p>
+                  <p class="recommendation-description">
+                    This is a description of the first recommended event.
+                  </p>
+                </div>
+                <div class="recommendation-card" data-event="2">
+                  <h3 class="recommendation-title">Event Title 2</h3>
+                  <p class="recommendation-date">Date: October 15, 2023</p>
+                  <p class="recommendation-description">
+                    This is a description of the second recommended event.
+                  </p>
+                </div>
+                <div class="recommendation-card" data-event="3">
+                  <h3 class="recommendation-title">Event Title 3</h3>
+                  <p class="recommendation-date">Date: October 20, 2023</p>
+                  <p class="recommendation-description">
+                    This is a description of the third recommended event.
+                  </p>
+                </div>
+                <div class="recommendation-card" data-event="4">
+                  <h3 class="recommendation-title">Event Title 4</h3>
+                  <p class="recommendation-date">Date: October 25, 2023</p>
+                  <p class="recommendation-description">
+                    This is a description of the fourth recommended event.
+                  </p>
+                </div>
+                <div class="recommendation-card" data-event="5">
+                  <h3 class="recommendation-title">Event Title 5</h3>
+                  <p class="recommendation-date">Date: October 30, 2023</p>
+                  <p class="recommendation-description">
+                    This is a description of the fifth recommended event.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Recommendations Popup -->
+          <div class="popup-overlay" id="recommendation-popup">
+            <div class="popup-content">
+              <h2 class="popup-title">Event Title</h2>
+              <div class="popup-details">
+                <p><strong>Date:</strong> <span class="popup-date">October 10, 2023</span></p>
+                <p><strong>Location:</strong> <span class="popup-location">New York, USA</span></p>
+                <p><strong>Description:</strong> <span class="popup-description">This is a detailed description of the event.</span></p>
+                <p><strong>Backdrop:</strong> <span class="popup-backdrop">Outdoor</span></p>
+                <p><strong>Number of People:</strong> <span class="popup-people">100</span></p>
+                <p><strong>Event Type:</strong> <span class="popup-type">Public</span></p>
+                <p><strong>Join Link:</strong> <a href="#" class="popup-link">Join Event</a></p>
+              </div>
+              <button class="close-popup">Close</button>
+            </div>
           </div>
         </div>
       </div>
+
+      <!-- Join Event Popup -->
+      <div class="popup-overlay" id="join-popup">
+        <div class="popup-content">
+          <h2>Join Event</h2>
+          <iframe src="join.html" class="popup-iframe"></iframe>
+          <button class="close-popup">Close</button>
+        </div>
+      </div>
     </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const buttons = document.querySelectorAll(".animated-button");
+        const popupOverlays = document.querySelectorAll(".popup-overlay");
+        const closeButtons = document.querySelectorAll(".close-popup");
+
+        // Open the correct popup based on the button clicked
+        buttons.forEach((button) => {
+          button.addEventListener("click", () => {
+            const popupId = button.getAttribute("data-popup");
+            const popup = document.getElementById(popupId);
+            popup.classList.add("active");
+          });
+        });
+
+        // Close the popup when the close button is clicked
+        closeButtons.forEach((button) => {
+          button.addEventListener("click", () => {
+            const popup = button.closest(".popup-overlay");
+            popup.classList.remove("active");
+          });
+        });
+
+        // Close the popup when clicking outside the popup content
+        popupOverlays.forEach((popup) => {
+          popup.addEventListener("click", (e) => {
+            if (e.target === popup) {
+              popup.classList.remove("active");
+            }
+          });
+        });
+      });
+
+      document.addEventListener('DOMContentLoaded', function () {
+        const recommendationsWrapper = document.querySelector('.recommendations-wrapper');
+
+        // Clone the cards to create a seamless loop
+        recommendationsWrapper.innerHTML += recommendationsWrapper.innerHTML;
+
+        // Pause animation on hover
+        recommendationsWrapper.addEventListener('mouseenter', () => {
+          recommendationsWrapper.style.animationPlayState = 'paused';
+        });
+
+        // Resume animation on mouse leave
+        recommendationsWrapper.addEventListener('mouseleave', () => {
+          recommendationsWrapper.style.animationPlayState = 'running';
+        });
+      });
+
+      document.addEventListener('DOMContentLoaded', function () {
+  const navLinks = document.querySelectorAll('.nav-link');
+  const sections = document.querySelectorAll('section');
+
+  // Function to highlight the active section
+  function highlightActiveSection() {
+    let index = sections.length;
+
+    // Loop through sections to find the active one
+    while (--index && window.scrollY + 50 < sections[index].offsetTop) {}
+
+    // Remove active class from all links
+    navLinks.forEach((link) => link.classList.remove('active'));
+
+    // Add active class to the current link
+    navLinks[index].classList.add('active');
+  }
+
+  // Highlight active section on scroll
+  window.addEventListener('scroll', highlightActiveSection);
+
+  // Smooth scrolling for nav links
+  navLinks.forEach((link) => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      const targetId = link.getAttribute('href');
+      const targetSection = document.querySelector(targetId);
+
+      // Scroll to the target section
+      targetSection.scrollIntoView({ behavior: 'smooth' });
+
+      // Highlight the clicked link
+      navLinks.forEach((link) => link.classList.remove('active'));
+      link.classList.add('active');
+    });
+  });
+
+  // Highlight the first section on page load
+  highlightActiveSection();
+});
+
+          document.addEventListener('DOMContentLoaded', function () {
+      const recommendationCards = document.querySelectorAll('.recommendation-card');
+      const recommendationPopup = document.getElementById('recommendation-popup');
+      const closePopup = recommendationPopup.querySelector('.close-popup');
+
+      // Event data (can be fetched from an API in a real-world scenario)
+      const events = {
+        1: {
+          title: 'Event Title 1',
+          date: 'October 10, 2023',
+          description: 'This is a detailed description of the first recommended event.',
+          location: 'New York, USA',
+          backdrop: 'Outdoor',
+          people: '100',
+          type: 'Public',
+          link: '#',
+        },
+        2: {
+          title: 'Event Title 2',
+          date: 'October 15, 2023',
+          description: 'This is a detailed description of the second recommended event.',
+          location: 'Los Angeles, USA',
+          backdrop: 'Indoor',
+          people: '50',
+          type: 'Private',
+          link: '#',
+        },
+        3: {
+          title: 'Event Title 3',
+          date: 'October 20, 2023',
+          description: 'This is a detailed description of the third recommended event.',
+          location: 'Chicago, USA',
+          backdrop: 'Outdoor',
+          people: '200',
+          type: 'Public',
+          link: '#',
+        },
+        4: {
+          title: 'Event Title 4',
+          date: 'October 25, 2023',
+          description: 'This is a detailed description of the fourth recommended event.',
+          location: 'Miami, USA',
+          backdrop: 'Beach',
+          people: '150',
+          type: 'Public',
+          link: '#',
+        },
+        5: {
+          title: 'Event Title 5',
+          date: 'October 30, 2023',
+          description: 'This is a detailed description of the fifth recommended event.',
+          location: 'San Francisco, USA',
+          backdrop: 'Outdoor',
+          people: '75',
+          type: 'Private',
+          link: '#',
+        },
+      };
+
+      // Open popup with event details
+      recommendationCards.forEach((card) => {
+        card.addEventListener('click', () => {
+          const eventId = card.getAttribute('data-event');
+          const event = events[eventId];
+
+          // Update popup content
+          recommendationPopup.querySelector('.popup-title').textContent = event.title;
+          recommendationPopup.querySelector('.popup-date').textContent = event.date;
+          recommendationPopup.querySelector('.popup-description').textContent = event.description;
+          recommendationPopup.querySelector('.popup-location').textContent = event.location;
+          recommendationPopup.querySelector('.popup-backdrop').textContent = event.backdrop;
+          recommendationPopup.querySelector('.popup-people').textContent = event.people;
+          recommendationPopup.querySelector('.popup-type').textContent = event.type;
+          recommendationPopup.querySelector('.popup-link').href = event.link;
+
+          // Show popup
+          recommendationPopup.classList.add('active');
+        });
+      });
+
+      // Close popup
+      closePopup.addEventListener('click', () => {
+        recommendationPopup.classList.remove('active');
+      });
+
+      // Close popup when clicking outside
+      recommendationPopup.addEventListener('click', (e) => {
+        if (e.target === recommendationPopup) {
+          recommendationPopup.classList.remove('active');
+        }
+      });
+    });
+    </script>
   </body>
 </html>

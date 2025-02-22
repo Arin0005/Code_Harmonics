@@ -12,14 +12,50 @@
         <h1 class="login-title">Welcome Back</h1>
         <form id="loginForm" class="login-form">
           <div>
-            <input type="email" placeholder="Email" class="input" />
+            <input type="email" id="email" placeholder="Email" class="input" required />
           </div>
           <div>
-            <input type="password" placeholder="Password" class="input" />
+            <input type="password" id="password" placeholder="Password" class="input" required />
           </div>
-          <a href="home.html" class="login-button">Sign In</a>
+          <button type="submit" class="login-button">Sign In</button>
+          <p class="signin">Don't have an acount ? <a href="register.html">Register</a> </p>
         </form>
+        <p id="error-message" style="color: red; display: none;">Invalid email or password.</p>
       </div>
     </div>
+
+    <script>
+      const loginForm = document.getElementById('loginForm');
+      const errorMessage = document.getElementById('error-message');
+
+      loginForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+
+        try {
+          const response = await fetch('http://127.0.0.1:5000/login', { // Update URL as per your API
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ email, password })
+          });
+
+          if (response.ok) {
+            const data = await response.json();
+            localStorage.setItem('token', data.token); // Assuming API returns a token
+            window.location.href = 'home.html'; // Redirect on success
+          } else {
+            errorMessage.style.display = 'block';
+          }
+        } catch (error) {
+          console.error('Login error:', error);
+          errorMessage.textContent = 'An error occurred. Please try again later.';
+          errorMessage.style.display = 'block';
+        }
+      });
+    </script>
   </body>
 </html>

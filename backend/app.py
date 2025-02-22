@@ -7,12 +7,20 @@ from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from authentication import auth_routes  # Import routes from authentication.py
 from profile import profile_routes
+from pymongo import MongoClient
 import os
 from dotenv import load_dotenv
 load_dotenv()
 # Initialize Flask app
 app = Flask(__name__)
 
+# Initialize MongoDB connection
+client = MongoClient('mongodb://localhost:27017/')  # Connect to local MongoDB
+db = client['invyta']  # Use or create a database named 'invyta'
+
+# Pass the MongoDB connection to the authentication module
+from authentication import init_auth
+init_auth(db)
 # Configuration
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY', 'fallback_jwt_secret_key')

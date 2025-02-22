@@ -18,14 +18,13 @@ bcrypt = Bcrypt()
 mail = Mail()
 limiter = Limiter(key_func=get_remote_address)
 
-# MongoDB connection
-client = MongoClient('mongodb://localhost:27017/')  # Connect to local MongoDB
-db = client['invyta']  # Use or create a database named 'auth_db'
-users_collection = db['users']  # Use or create a collection named 'users'
-otp_collection = db['otps']  # Use or create a collection named 'otps'
+def init_auth(db):
+    global users_collection, otp_collection
+    users_collection = db['users']  # Use or create a collection named 'users'
+    otp_collection = db['otps']
 
 @auth_routes.route('/register', methods=['POST'])
-@limiter.limit("5 per minute")
+@limiter.limit("5 per minute",key_func=lambda: request.get_json().get('email'))
 def register():
     user_id_gen = lambda: uuid.uuid4().hex[:12]
     data = request.get_json()
@@ -68,7 +67,7 @@ def register():
     return jsonify({"message": "User registered. Please verify your email."}), 201
 
 @auth_routes.route('/verify', methods=['POST'])
-@limiter.limit("5 per minute")
+@limiter.limit("5 per minute",key_func=lambda: request.get_json().get('email'))
 def verify():
     data = request.get_json()
     email = data.get('email')
@@ -92,7 +91,7 @@ def verify():
     return jsonify({"message": "Email verified successfully"}), 200
 
 @auth_routes.route('/login', methods=['POST'])
-@limiter.limit("5 per minute")
+@limiter.limit("5 per minute",key_func=lambda: request.get_json().get('email'))
 def login():
     data = request.get_json()
     email = data.get('email')

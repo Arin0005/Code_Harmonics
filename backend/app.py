@@ -5,7 +5,8 @@ from flask_bcrypt import Bcrypt
 from flask_mail import Mail
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
-from authentication import auth_routes  # Import routes from authentication.py
+from authentication import auth_routes,init_auth  # Import routes from authentication.py
+from event_creation import event_routes, init_events
 from profile import profile_routes
 from pymongo import MongoClient
 import os
@@ -19,8 +20,8 @@ client = MongoClient('mongodb://localhost:27017/')  # Connect to local MongoDB
 db = client['invyta']  # Use or create a database named 'invyta'
 
 # Pass the MongoDB connection to the authentication module
-from authentication import init_auth
 init_auth(db)
+init_events(db)
 # Configuration
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY', 'fallback_jwt_secret_key')
@@ -39,7 +40,7 @@ limiter = Limiter(app=app, key_func=get_remote_address, default_limits=["200 per
 # Register authentication routes
 app.register_blueprint(auth_routes)
 app.register_blueprint(profile_routes)
-
+app.register_blueprint(event_routes)
 # Run the application
 if __name__ == '__main__':
     app.run(debug=True)

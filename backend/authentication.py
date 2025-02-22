@@ -26,7 +26,6 @@ otp_collection = db['otps']  # Use or create a collection named 'otps'
 
 @auth_routes.route('/register', methods=['POST'])
 @limiter.limit("5 per minute")
-
 def register():
     user_id_gen = lambda: uuid.uuid4().hex[:12]
     data = request.get_json()
@@ -39,7 +38,7 @@ def register():
     # Hash the password
     hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
 
-    data = {
+    docs = {
         'username': "",
         'user_id': user_id_gen(),
         'email': email,
@@ -50,7 +49,7 @@ def register():
         "bio": "tell me about yourself!",
     }
     # Store user in MongoDB
-    users_collection.insert_one(data)
+    users_collection.insert_one(docs)
 
     # Generate OTP
     otp = pyotp.TOTP(pyotp.random_base32()).now()

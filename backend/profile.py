@@ -10,11 +10,12 @@ from flask_limiter.util import get_remote_address
 import pyotp
 from pymongo import MongoClient
 
-def init_profile(db):
-    global users_collection
-    users_collection = db['users']  # Use or create a collection named 'users'
-
 profile_routes = Blueprint('profile_routes', __name__)
+# def init_profile(db):
+#     global users_collection
+client = MongoClient('mongodb://localhost:27017/')  # Connect to local MongoDB
+db = client['invyta']
+users_collection = db['users']  # Use or create a collection named 'users'
 
 @profile_routes.route("/profile",methods=['POST'])
 def update_data():  #update profile (user name, bio,)

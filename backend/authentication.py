@@ -109,10 +109,14 @@ def login():
     if not user['verified']:
         return jsonify({"message": "Email not verified"}), 403
 
+    has_username = 'username' in user and user['username'] is not None
+
     # Create JWT token
     access_token = create_access_token(identity=email)
-    return jsonify(access_token=access_token), 200
-
+    return jsonify({
+        "access_token": access_token,
+        "has_username": has_username
+    }), 200
 @auth_routes.route('/protected', methods=['GET'])
 @jwt_required()
 def protected():

@@ -7,10 +7,10 @@ from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from authentication import auth_routes,init_auth  # Import routes from authentication.py
 from event import event_routes, init_events
-from profile import profile_routes, init_profile
+from profile import profile_routes
 from event import event_routes, init_events
 from event_joining import event_join_routes, init_event_join
-from profile import profile_routes
+# from profile import profile_routes,init_profile
 from pymongo import MongoClient
 from recommendation import init_profile, recommendation_routes
 import os
@@ -22,8 +22,7 @@ from flask_cors import CORS
 app = Flask(__name__)
 CORS(app)
 load_dotenv()
-# Initialize Flask app
-# app = Flask(__name__)
+
 
 # Initialize MongoDB connection
 client = MongoClient('mongodb://localhost:27017/')  # Connect to local MongoDB
@@ -32,7 +31,7 @@ fs = GridFS(db)
 # Pass the MongoDB connection to the authentication module
 init_auth(db)
 init_events(db)
-init_profile(db)
+# init_profile(db)
 init_event_join(db)
 # Configuration
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')

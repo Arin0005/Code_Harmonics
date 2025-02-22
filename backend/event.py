@@ -6,7 +6,7 @@ from pymongo import MongoClient
 from flask_jwt_extended import jwt_required, get_jwt_identity
 import secrets
 from werkzeug.utils import secure_filename
-
+from gridfs import GridFS
 # Create a Blueprint for event routes
 event_routes = Blueprint('event_routes', __name__)
 
@@ -14,10 +14,10 @@ event_routes = Blueprint('event_routes', __name__)
 events_collection = None
 
 def init_events(db):
-    global events_collection, users_collection
+    global events_collection, users_collection,fs
     events_collection = db['events']  # Use or create a collection named 'events'
     users_collection = db['users']
-
+    fs = GridFS(db)
 
 @event_routes.route('/create', methods=['POST'])
 @jwt_required()  # Require a valid JWT token to access this route

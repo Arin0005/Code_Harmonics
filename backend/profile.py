@@ -10,18 +10,22 @@ from flask_limiter.util import get_remote_address
 import pyotp
 from pymongo import MongoClient
 
-client = MongoClient('mongodb://localhost:27017/')  # Connect to local MongoDB
-db = client['invyta']  # Use or create a database named 'auth_db'
-users_collection = db['users']  # Use or create a collection named 'users'
+def init_profile(db):
+    global users_collection
+    users_collection = db['users']  # Use or create a collection named 'users'
 
 profile_routes = Blueprint('profile_routes', __name__)
 
 @profile_routes.route("/profile",methods=['POST'])
 def update_data():  #update profile (user name, bio,)
     data = request.get_json()
+    if "user_name" or "user_id" or "bio" or "favorates" not in data:
+        return jsonify({"message": "incomplete request."}), 401
+
     user_name = data.get("user_name")
     id = data.get("user_id")
-    bio = data.get('bio')
-    users_collection.update_one({"user_id":id},{"$set":{"username": user_name, "bio":bio}})
+    bio = data.get("bio")
+    favorates = data.get("favorates")
+    users_collection.update_one({"user_id":id},{"$set":{"username": user_name, "bio":bio, "favorates": favorates}})
     return jsonify({"message": "User Updated."}), 201
 

@@ -45,6 +45,7 @@ def register():
         'verified': False,
         "profile_pic": "",
         "created_on": datetime.today().strftime("%d/%m/%Y"),
+        "favorates": [],
         "bio": "tell me about yourself!",
     }
     # Store user in MongoDB

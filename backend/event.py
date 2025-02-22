@@ -5,6 +5,8 @@ from bson import ObjectId
 from pymongo import MongoClient
 from flask_jwt_extended import jwt_required, get_jwt_identity
 import secrets
+from werkzeug.utils import secure_filename
+
 # Create a Blueprint for event routes
 event_routes = Blueprint('event_routes', __name__)
 
@@ -57,6 +59,7 @@ def create_event():
         "max_people": max_people,
         "is_private": is_private,
         "tags": tags,
+        "media": [],
         "created_at": datetime.utcnow(),  # Store creation timestamp
         "updated_at": datetime.utcnow(),  # Store update timestamp
     }
@@ -219,3 +222,151 @@ def get_attendees(event_id):
     attendees = event.get('attendees', [])
 
     return jsonify({"attendees": attendees}), 200
+
+@event_routes.route('/events/<event_id>/media/upload', methods=['POST'])
+@jwt_required()
+def upload_media(event_id):
+    """
+    Upload a media file (photo/video) to an event and store it in GridFS.
+    """
+    # Validate event ID
+    try:
+        event_id = ObjectId(event_id)
+    except Exception as e:
+        return jsonify({"message": "Invalid event ID"}), 400
+
+    # Check if the event exists
+    event = events_collection.find_one({"_id": event_id})
+    if not event:
+        return jsonify({"message": "Event not found"}), 404
+
+    # Get the current user's ID
+    current_user_email = get_jwt_identity()
+    user = users_collection.find_one({"email": current_user_email})
+    if not user:
+        return jsonify({"message": "User not found"}), 404
+    user_id = user['user_id']
+
+    # Check if the user is an attendee
+    if user_id not in event.get('attendees', []):
+        return jsonify({"message": "You are not an attendee of this event"}), 403
+
+    # Get the uploaded file
+    if 'file' not in request.files:
+        return jsonify({"message": "No file uploaded"}), 400
+
+    file = request.files['file']
+    if file.filename == '':
+        return jsonify({"message": "No file selected"}), 400
+
+    # Secure the filename
+    filename = secure_filename(file.filename)
+
+    # Store the file in GridFS
+    try:
+        file_id = fs.put(file, filename=filename, uploaded_by=user_id)
+    except Exception as e:
+        return jsonify({"message": "File upload failed", "error": str(e)}), 500
+
+    # Add the media file to the event's media list
+    media_entry = {
+        "file_id": str(file_id),
+        "uploaded_by": user_id,
+        "status": "pending",  # Default status is pending
+        "uploaded_at": datetime.utcnow(),
+    }
+
+    events_collection.update_one(
+        {"_id": event_id},
+        {"$push": {"media": media_entry}}
+    )
+
+    return jsonify({"message": "File uploaded successfully", "file_id": str(file_id)}), 200
+
+@event_routes.route('/events/<event_id>/media/<file_id>', methods=['GET'])
+def get_media(event_id, file_id):
+    """
+    Retrieve a media file from GridFS.
+    """
+    # Validate event ID
+    try:
+        event_id = ObjectId(event_id)
+        file_id = ObjectId(file_id)
+    except Exception as e:
+        return jsonify({"message": "Invalid event ID or file ID"}), 400
+
+    # Check if the event exists
+    event = events_collection.find_one({"_id": event_id})
+    if not event:
+        return jsonify({"message": "Event not found"}), 404
+
+    # Check if the file exists in the event's media list
+    media_entry = next((media for media in event.get('media', []) if media['file_id'] == str(file_id)), None)
+    if not media_entry:
+        return jsonify({"message": "File not found in this event"}), 404
+
+    # Fetch the file from GridFS
+    try:
+        file = fs.get(file_id)
+        return file.read(), 200, {'Content-Type': file.content_type}
+    except Exception as e:
+        return jsonify({"message": "Failed to retrieve file", "error": str(e)}), 500
+    
+@event_routes.route('/events/<event_id>/media/moderate', methods=['POST'])
+@jwt_required()
+def moderate_media(event_id):
+    """
+    Approve or reject a media file for an event.
+    """
+    data = request.get_json()
+    file_id = data.get('file_id')
+    status = data.get('status')  # "approved" or "rejected"
+
+    # Validate event ID
+    try:
+        event_id = ObjectId(event_id)
+        file_id = ObjectId(file_id)
+    except Exception as e:
+        return jsonify({"message": "Invalid event ID or file ID"}), 400
+
+    # Check if the event exists
+    event = events_collection.find_one({"_id": event_id})
+    if not event:
+        return jsonify({"message": "Event not found"}), 404
+
+    # Check if the current user is the event creator
+    current_user_email = get_jwt_identity()
+    user = users_collection.find_one({"email": current_user_email})
+    if not user or user['user_id'] != event['user_id']:
+        return jsonify({"message": "You are not authorized to moderate this event"}), 403
+
+    # Update the media status
+    result = events_collection.update_one(
+        {"_id": event_id, "media.file_id": str(file_id)},
+        {"$set": {"media.$.status": status}}
+    )
+
+    if result.matched_count == 0:
+        return jsonify({"message": "Media file not found"}), 404
+
+    return jsonify({"message": f"Media file {status} successfully"}), 200
+
+@event_routes.route('/events/<event_id>/media', methods=['GET'])
+def list_media(event_id):
+    """
+    Retrieve all media files for an event.
+    """
+    # Validate event ID
+    try:
+        event_id = ObjectId(event_id)
+    except Exception as e:
+        return jsonify({"message": "Invalid event ID"}), 400
+
+    # Check if the event exists
+    event = events_collection.find_one({"_id": event_id})
+    if not event:
+        return jsonify({"message": "Event not found"}), 404
+
+    # Return the list of media files
+    media_files = event.get('media', [])
+    return jsonify({"media": media_files}), 200

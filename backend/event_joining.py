@@ -12,7 +12,7 @@ event_join_routes = Blueprint('event_join_routes', __name__)
 events_collection = None
 users_collection = None
 
-def init_events(db):
+def init_event_join(db):
     global events_collection, users_collection
     events_collection = db['events']  # Use or create a collection named 'events'
     users_collection = db['users']

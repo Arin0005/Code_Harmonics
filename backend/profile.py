@@ -19,14 +19,13 @@ profile_routes = Blueprint('profile_routes', __name__)
 @profile_routes.route("/profile",methods=['POST'])
 def update_data():  #update profile (user name, bio,)
     data = request.get_json()
-    if "user_name" or "user_id" or "bio" or "favorates" not in data:
-        return jsonify({"message": "incomplete request."}), 400
+    # if "user_name" or "user_id" or "bio" or "favorates" not in data:
+    #     return jsonify({"message": "incomplete request."}), 400
 
     user_name = data.get("user_name")
     id = data.get("user_id")
     bio = data.get("bio")
     favorates = data.get("favorates")
-    
     users_collection.update_one({"user_id":id},{"$set":{"username": user_name, "bio":bio, "favorates": favorates}})
     return jsonify({"message": "User Updated."}), 201
 

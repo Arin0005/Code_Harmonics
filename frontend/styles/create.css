@@ -1,0 +1,154 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(to bottom right, #111827, #000);
+    min-height: 100vh;
+    padding: 16px;
+  }
+  
+  .main-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+  }
+  
+  .form-container {
+    max-width: 32rem;
+    width: 100%;
+  }
+  
+  .form-box {
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(10px);
+    border: 1px solid #374151;
+    padding: 32px;
+    border-radius: 8px;
+  }
+  
+  .form-title {
+    font-size: 2rem;
+    font-weight: bold;
+    color: white;
+    margin-bottom: 32px;
+  }
+  
+  .form {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+  
+  .input, .textarea {
+    width: 100%;
+    padding: 12px 16px;
+    background: rgba(31, 41, 55, 0.5);
+    border: 1px solid #374151;
+    border-radius: 8px;
+    color: white;
+  }
+  
+  .textarea {
+    resize: none;
+  }
+  
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+  
+  .input {
+    box-sizing: border-box; /* Ensure padding is included in the width */
+  }
+  
+  .file-upload {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px;
+    background: #1f2937;
+    color: white;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+  
+  input[type="file"] {
+      display: none; /* Hides the default file input */
+  }
+  
+  .file-upload:hover {
+    background: #374151;
+  }
+  
+  .icon {
+    width: 16px;
+    height: 16px;
+    margin-right: 8px;
+  }
+  
+  .submit-btn {
+    width: 100%;
+    padding: 12px;
+    background: white;
+    color: black;
+    border-radius: 8px;
+    transition: background 0.3s;
+  }
+  
+  .submit-btn:hover {
+    background: #e5e7eb;
+  }
+  
+  .share-section {
+    margin-top: 32px;
+    padding: 16px;
+    background: rgba(31, 41, 55, 0.5);
+    border-radius: 8px;
+  }
+  
+  .share-title {
+    color: white;
+    font-weight: bold;
+    margin-bottom: 16px;
+  }
+  
+  .button-group {
+    display: flex;
+    gap: 16px;
+  }
+  
+  .share-btn {
+    flex: 1;
+    padding: 12px;
+    border-radius: 8px;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.3s;
+  }
+  
+  .blue-btn {
+    background: #2563eb;
+  }
+  
+  .blue-btn:hover {
+    background: #1e40af;
+  }
+  
+  .green-btn {
+    background: #16a34a;
+  }
+  
+  .green-btn:hover {
+    background: #15803d;
+  }
+  
+  .qr-container {
+    margin-top: 16px;
+    display: flex;
+    justify-content: center;
+  }
+  

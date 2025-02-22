@@ -5,8 +5,7 @@
   width: 100%;
   height: 100%;
   z-index: -1; /* Send to back */
-  background: url("assets\pngtree-mottled-texture-red-black-gradient-background-image_901247.jpg")
-    no-repeat center center fixed;
+  background: url("assets\bbg.jpg") no-repeat center center fixed;
   background-size: cover; /* Cover the entire area */
   margin: 0; /* Remove any margin */
 }
@@ -17,7 +16,7 @@
   right: 0;
   bottom: 0;
   left: 0;
-  z-index: -1; /* Send to back */
+  z-index: -1;
   display: flex;
   align-items: center;
   padding: 24px 20px;

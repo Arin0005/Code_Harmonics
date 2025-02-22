@@ -6,6 +6,7 @@ from flask_mail import Message, Mail
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 import pyotp
+from pymongo import MongoClient
 
 # Create a Blueprint for authentication routes
 auth_routes = Blueprint('auth_routes', __name__)
@@ -15,9 +16,11 @@ bcrypt = Bcrypt()
 mail = Mail()
 limiter = Limiter(key_func=get_remote_address)
 
-# In-memory storage for demo purposes
-users = {}
-otp_storage = {}
+# MongoDB connection
+client = MongoClient('mongodb://localhost:27017/')  # Connect to local MongoDB
+db = client['auth_db']  # Use or create a database named 'auth_db'
+users_collection = db['users']  # Use or create a collection named 'users'
+otp_collection = db['otps']  # Use or create a collection named 'otps'
 
 @auth_routes.route('/register', methods=['POST'])
 @limiter.limit("5 per minute")
@@ -26,18 +29,28 @@ def register():
     email = data.get('email')
     password = data.get('password')
 
-    if email in users:
+    # Check if user already exists
+    if users_collection.find_one({'email': email}):
         return jsonify({"message": "User already exists"}), 400
 
     # Hash the password
     hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
 
-    # Store user
-    users[email] = {'password': hashed_password, 'verified': False}
+    # Store user in MongoDB
+    users_collection.insert_one({
+        'email': email,
+        'password': hashed_password,
+        'verified': False
+    })
 
     # Generate OTP
     otp = pyotp.TOTP(pyotp.random_base32()).now()
-    otp_storage[email] = otp
+
+    # Store OTP in MongoDB
+    otp_collection.insert_one({
+        'email': email,
+        'otp': otp
+    })
 
     # Send OTP via email
     msg = Message('Your OTP Code', sender='your_email@example.com', recipients=[email])
@@ -53,14 +66,21 @@ def verify():
     email = data.get('email')
     otp = data.get('otp')
 
-    if email not in users:
+    # Check if user exists
+    user = users_collection.find_one({'email': email})
+    if not user:
         return jsonify({"message": "User does not exist"}), 404
 
-    if otp_storage.get(email) != otp:
+    # Check if OTP is valid
+    stored_otp = otp_collection.find_one({'email': email})
+    if not stored_otp or stored_otp['otp'] != otp:
         return jsonify({"message": "Invalid OTP"}), 400
 
-    users[email]['verified'] = True
-    del otp_storage[email]
+    # Mark user as verified
+    users_collection.update_one({'email': email}, {'$set': {'verified': True}})
+
+    # Delete OTP from MongoDB
+    otp_collection.delete_one({'email': email})
 
     return jsonify({"message": "Email verified successfully"}), 200
 
@@ -71,10 +91,13 @@ def login():
     email = data.get('email')
     password = data.get('password')
 
-    if email not in users or not bcrypt.check_password_hash(users[email]['password'], password):
+    # Check if user exists and password is correct
+    user = users_collection.find_one({'email': email})
+    if not user or not bcrypt.check_password_hash(user['password'], password):
         return jsonify({"message": "Invalid credentials"}), 401
 
-    if not users[email]['verified']:
+    # Check if email is verified
+    if not user['verified']:
         return jsonify({"message": "Email not verified"}), 403
 
     # Create JWT token

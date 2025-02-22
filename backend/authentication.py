@@ -1,4 +1,6 @@
 # authentication.py
+import uuid
+from datetime import datetime
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 from flask_bcrypt import Bcrypt
@@ -18,17 +20,18 @@ limiter = Limiter(key_func=get_remote_address)
 
 # MongoDB connection
 client = MongoClient('mongodb://localhost:27017/')  # Connect to local MongoDB
-db = client['auth_db']  # Use or create a database named 'auth_db'
+db = client['invyta']  # Use or create a database named 'auth_db'
 users_collection = db['users']  # Use or create a collection named 'users'
 otp_collection = db['otps']  # Use or create a collection named 'otps'
 
 @auth_routes.route('/register', methods=['POST'])
 @limiter.limit("5 per minute")
+
 def register():
+    user_id_gen = lambda: uuid.uuid4().hex[:12]
     data = request.get_json()
     email = data.get('email')
     password = data.get('password')
-
     # Check if user already exists
     if users_collection.find_one({'email': email}):
         return jsonify({"message": "User already exists"}), 400
@@ -36,12 +39,18 @@ def register():
     # Hash the password
     hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
 
-    # Store user in MongoDB
-    users_collection.insert_one({
+    data = {
+        'username': "",
+        'user_id': user_id_gen(),
         'email': email,
         'password': hashed_password,
-        'verified': False
-    })
+        'verified': False,
+        "profile_pic": "",
+        "created_on": datetime.today().strftime("%d/%m/%Y"),
+        "bio": "tell me about yourself!",
+    }
+    # Store user in MongoDB
+    users_collection.insert_one(data)
 
     # Generate OTP
     otp = pyotp.TOTP(pyotp.random_base32()).now()
@@ -65,7 +74,6 @@ def verify():
     data = request.get_json()
     email = data.get('email')
     otp = data.get('otp')
-
     # Check if user exists
     user = users_collection.find_one({'email': email})
     if not user:
@@ -91,7 +99,9 @@ def login():
     email = data.get('email')
     password = data.get('password')
 
-    # Check if user exists and password is correct
+    if password is None:
+        print("flag")
+
     user = users_collection.find_one({'email': email})
     if not user or not bcrypt.check_password_hash(user['password'], password):
         return jsonify({"message": "Invalid credentials"}), 401

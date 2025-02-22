@@ -25,7 +25,7 @@ def update_data():  #update profile (user name, bio,)
     user_name = data.get("user_name")
     id = data.get("user_id")
     bio = data.get("bio")
-    favorates = data.get("favorates")
-    users_collection.update_one({"user_id":id},{"$set":{"username": user_name, "bio":bio, "favorates": favorates}})
+    favorite = data.get("favorite")
+    users_collection.update_one({"user_id":id},{"$set":{"username": user_name, "bio":bio, "favorite": favorite}})
     return jsonify({"message": "User Updated."}), 201
 

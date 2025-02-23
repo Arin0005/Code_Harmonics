@@ -11,19 +11,21 @@ from pymongo import MongoClient
 
 recommendation_routes = Blueprint('recommendation_routes', __name__)
 
-def init_profile(db):
-    global users_collection, events_collection
-    users_collection = db['users']
-    events_collection = db['events']
+client = MongoClient('mongodb://localhost:27017/')  # Connect to local MongoDB
+db = client['invyta']
+users_collection = db['users']
+events_collection = db['events']
 
-@recommendation_routes.route("/recommend/<string:user_id>", methods=['GET'])
-def recommend(user_id):
+@recommendation_routes.route("/recommend", methods=['GET'])
+@jwt_required() 
+def recommend():
     try:
-        user = users_collection.find_one({"user_id":user_id })
+        current_user_email = get_jwt_identity()
+        user = users_collection.find_one({"email":current_user_email })
         if not user:
             return jsonify({"error": "User not found"}), 404
 
-        favorites = user.get("favorates", [])
+        favorites = user.get("favorite", [])
         if not favorites:
             return jsonify({"message": "No favorites found. Add some to get recommendations!"})
 

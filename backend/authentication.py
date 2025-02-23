@@ -45,7 +45,7 @@ def register():
         'verified': False,
         "profile_pic": "",
         "created_on": datetime.today().strftime("%d/%m/%Y"),
-        "favorates": [],
+        "favorites": [],
         "bio": "tell me about yourself!",
     }
     # Store user in MongoDB
@@ -111,7 +111,10 @@ def login():
     if not user['verified']:
         return jsonify({"message": "Email not verified"}), 403
 
-    has_username = 'username' in user and user['username'] is not None
+    if 'username' in user and user['username'] == "":
+        has_username = False
+    else:
+        has_username = True
 
     # Create JWT token
     access_token = create_access_token(identity=email)

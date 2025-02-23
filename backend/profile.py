@@ -30,18 +30,32 @@ def update_data():
     data = request.get_json()
     username = data.get("username")
     bio = data.get("bio")
-    favorite = data.get("favorite")
+    favorite = str(data.get("favorite"))
 
     # Update the user's profile in the database
     users_collection.update_one(
         {"user_id": user_id},
-        {"$set": {"username": username, "bio": bio, "favorite": favorite}}
+        {"$set": {"username": username, "bio": bio, "favorite": favorite.split(",")}}
     )
 
     return jsonify({"message": "User Updated."}), 201
 
-@profile_routes.route("/get_profile/<string:user_id>",methods=['GET'])
-def get_profile(user_id):
-    id = user_id
-    response = users_collection.find_one({"user_id":id},{"bio": 1,"_id":0,"email":1,"username":1,"user_id":1,"created_on":1})
-    return response, 200
+@profile_routes.route("/profile", methods=['GET'])
+@jwt_required()  # Require a valid JWT token
+def get_profile():
+    """
+    Get the profile of the currently logged-in user.
+    """
+    # Get the user_id from the JWT token
+    current_user_email = get_jwt_identity()
+
+    # Fetch the user profile from the database
+    response = users_collection.find_one(
+        {"email": current_user_email},
+        {"bio": 1, "_id": 0, "email": 1, "username": 1, "user_id": 1, "created_on": 1,"favorite": 1}
+    )
+
+    if not response:
+        return jsonify({"message": "User not found"}), 404
+
+    return jsonify(response), 200

@@ -12,7 +12,7 @@ from event import event_routes, init_events
 from event_joining import event_join_routes, init_event_join
 # from profile import profile_routes,init_profile
 from pymongo import MongoClient
-from recommendation import init_profile, recommendation_routes
+from recommendation import recommendation_routes
 import os
 from gridfs import GridFS
 from dotenv import load_dotenv

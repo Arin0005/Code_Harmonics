@@ -150,12 +150,67 @@ def delete_event(event_id):
 
     return jsonify({"message": "Event deleted successfully"}), 200
 
-@event_routes.route('/event/<user_id>', methods=['GET'])
-def get_events_by_user(user_id):
+@event_routes.route('/event/<event_id>/approve', methods=['POST'])
+@jwt_required()
+def approve_user(event_id):
+    """
+    Approve a user to join a private event.
+    """
+    data = request.get_json()
+    user_id_to_approve = data.get('user_id')
+
+    # Validate event ID
+    try:
+        event_id = ObjectId(event_id)
+    except Exception as e:
+        return jsonify({"message": "Invalid event ID"}), 400
+
+    # Get the current user's ID from the JWT token
+    current_user_email = get_jwt_identity()
+    current_user = users_collection.find_one({"email": current_user_email})
+    if not current_user:
+        return jsonify({"message": "User not found"}), 404
+
+    # Check if the current user is the event creator
+    event = events_collection.find_one({"_id": event_id})
+    if not event:
+        return jsonify({"message": "Event not found"}), 404
+
+    if event['user_id'] != current_user['user_id']:
+        return jsonify({"message": "You are not authorized to approve users for this event"}), 403
+
+    # Check if the event is private
+    if not event.get('is_private', False):
+        return jsonify({"message": "This event is not private"}), 400
+
+    # Check if the user to approve is in the pending_approval list
+    if user_id_to_approve not in event.get('pending_approval', []):
+        return jsonify({"message": "User not found in the pending approval list"}), 404
+
+    # Move the user from pending_approval to attendees
+    events_collection.update_one(
+        {"_id": event_id},
+        {
+            "$pull": {"pending_approval": user_id_to_approve},  # Remove from pending_approval
+            "$addToSet": {"attendees": user_id_to_approve}  # Add to attendees
+        }
+    )
+
+    return jsonify({"message": "User approved successfully"}), 200
+
+@event_routes.route('/event/user', methods=['GET'])
+@jwt_required()
+def get_events_by_user():
     """
     Retrieve all events created by a specific user.
     """
     try:
+        # Get the current user's ID from the JWT token
+        current_user_email = get_jwt_identity()
+        user = users_collection.find_one({"email": current_user_email})
+        if not user:
+            return jsonify({"message": "User not found"}), 404
+        user_id = user['user_id']
         # Query MongoDB for events created by the user
         events = list(events_collection.find({"user_id": user_id}))
 

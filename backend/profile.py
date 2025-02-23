@@ -35,7 +35,7 @@ def update_data():
     # Update the user's profile in the database
     users_collection.update_one(
         {"user_id": user_id},
-        {"$set": {"username": username, "bio": bio, "favorite": favorite.split(",")}}
+        {"$set": {"username": username, "bio": bio, "favorites": favorite.split(",")}}
     )
 
     return jsonify({"message": "User Updated."}), 201

